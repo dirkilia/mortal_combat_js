@@ -6,9 +6,10 @@ const player1 = {
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
   weapon: ["Sword", "Hook"],
-  attack: () => {
-    console.log(this.name + " Fight...");
-  },
+  attack: attack,
+  elHP: elHP,
+  changeHP: changeHP,
+  renderHP: renderHP
 };
 
 const player2 = {
@@ -17,10 +18,15 @@ const player2 = {
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
   weapon: ["Sword", "IceShot"],
-  attack: () => {
-    console.log(this.name + " Fight...");
-  },
+  attack: attack,
+  elHP: elHP,
+  changeHP: changeHP,
+  renderHP: renderHP
 };
+
+function attack () {
+	console.log(this.name + " Fight...");
+}
 
 const createElement = (tag, className) => {
   const $tag = document.createElement(tag);
@@ -52,16 +58,22 @@ const createPlayer = (player_obj) => {
   return $player;
 };
 
-const changeHP = (player) => {
-	const $playerLife = document.querySelector('.player' + player.player + ' .life')
-	player.hp -= getRandom(20)
-
+function changeHP (damage) {
 	
-	if (player.hp <= 0) {
-		player.hp = 0
+	this.hp -= damage
+
+	if (this.hp <= 0) {
+		this.hp = 0
 	}
 
-	$playerLife.style.width = player.hp + '%'
+}
+
+function elHP () {
+	return document.querySelector('.player' + this.player + ' .life')
+}
+
+function renderHP () {
+	return this.elHP().style.width = this.hp + '%'
 }
 
 const getRandom = (max) => {
@@ -87,12 +99,31 @@ const playerWins = (name) => {
 	return $winTitle
 }
 
+const createReloadButton = () => {
+	const $reloadWrap = createElement('div', 'reloadWrap')
+	const $reloadButton = createElement('button', 'button')
+
+	$reloadButton.innerText = 'restart'
+	$reloadWrap.append($reloadButton)
+
+	return $reloadWrap
+}
+
 $randomButton.addEventListener('click', () => {
-	changeHP(player1)
-	changeHP(player2)
+	player1.changeHP(getRandom(20))
+	player2.changeHP(getRandom(20))
+	player1.renderHP()
+	player2.renderHP()
+
 
 	if (player1.hp === 0 || player2.hp === 0) {
 		$randomButton.disabled = true
+		const $reloadButton = createReloadButton();
+		$arena.append($reloadButton)
+
+		$reloadButton.addEventListener('click', () => {
+			window.location.reload()
+		})
 	}
 
 	if (player1.hp === 0 && player1.hp < player2.hp) {

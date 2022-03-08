@@ -1,15 +1,24 @@
 const $arena = document.querySelector(".arenas");
 const $randomButton = document.querySelector('.button')
+const $formFight = document.querySelector('.control')
+
+const HIT = {
+    head: 30,
+    body: 25,
+    foot: 20,
+}
+const ATTACK = ['head', 'body', 'foot'];
+
 const player1 = {
   player: 1,
   name: "Scorpion",
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
   weapon: ["Sword", "Hook"],
-  attack: attack,
-  elHP: elHP,
-  changeHP: changeHP,
-  renderHP: renderHP
+  attack,
+  elHP,
+  changeHP,
+  renderHP
 };
 
 const player2 = {
@@ -18,10 +27,10 @@ const player2 = {
   hp: 100,
   img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
   weapon: ["Sword", "IceShot"],
-  attack: attack,
-  elHP: elHP,
-  changeHP: changeHP,
-  renderHP: renderHP
+  attack,
+  elHP,
+  changeHP,
+  renderHP
 };
 
 function attack () {
@@ -109,14 +118,9 @@ const createReloadButton = () => {
 	return $reloadWrap
 }
 
-$randomButton.addEventListener('click', () => {
-	player1.changeHP(getRandom(20))
-	player2.changeHP(getRandom(20))
-	player1.renderHP()
-	player2.renderHP()
+const checkResult = () => {
 
-
-	if (player1.hp === 0 || player2.hp === 0) {
+	if (player1.hp <= 0 || player2.hp <= 0) {
 		$randomButton.disabled = true
 		const $reloadButton = createReloadButton();
 		$arena.append($reloadButton)
@@ -133,9 +137,66 @@ $randomButton.addEventListener('click', () => {
 	} else if (player1.hp === 0 && player2.hp === 0) {
 		$arena.append(playerWins())
 	}
-})
+}
 
 $arena.append(
   createPlayer(player1),
   createPlayer(player2)
 );
+
+const enemyAttack = () => {
+	const hit = ATTACK[getRandom(3) - 1]
+	const defence = ATTACK[getRandom(3) - 1]
+
+	return {
+		value: getRandom(HIT[hit]),
+		hit,
+		defence
+	}
+}
+
+const playerAttack = (form) => {
+	let attack = {
+		value: 0,
+		hit: '',
+		defence: ''
+	}
+	if (form) {
+		for (let item of form) {
+			if (item.checked && item.name === 'hit') {
+				attack.value = getRandom(HIT[item.value])
+				attack.hit = item.value;
+			}
+	
+			if (item.checked && item.name === 'defence') {
+				attack.defence = item.value
+			}
+	
+			item.checked = false
+		}
+	}
+	
+	return attack
+}
+
+const fight = (player1, player2) => {
+	const player = playerAttack($formFight)
+	const enemy = enemyAttack()
+
+	if (player.hit !== enemy.defence) {
+		player2.changeHP(player.value)
+		player2.renderHP()
+	}
+
+	if (enemy.hit !== player.defence) {
+		player1.changeHP(enemy.value)
+		player1.renderHP()
+	}
+}
+
+$formFight.addEventListener('submit', (e) => {
+	e.preventDefault();
+	
+	fight(player1, player2)
+	checkResult()
+})

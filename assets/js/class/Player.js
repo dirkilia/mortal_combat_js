@@ -1,4 +1,6 @@
 import { createElement } from "../utils.js";
+import Api from "./Api.js";
+
 
 class Player {
   constructor(props) {
@@ -7,7 +9,7 @@ class Player {
     this.hp = props.hp;
     this.img = props.img;
     this.selector = `player${this.player}`;
-    this.rootSelector = props.rootSelector
+    this.rootSelector = props.rootSelector;
   }
 
   attack = () => {
@@ -52,20 +54,19 @@ class Player {
   };
 }
 
+const chosenHeroByPlayer = JSON.parse(localStorage.getItem('player1'))
+const chosenHeroByComputer = await new Api({}).getHero()
+
 export const player1 = new Player({
   player: 1,
-  name: "Scorpion",
-  hp: 100,
-  img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
+  ...chosenHeroByPlayer,
   weapon: ["Sword", "Hook"],
   rootSelector: 'arenas'
 })
 
 export const player2 = new Player({
   player: 2,
-  name: "SubZero",
-  hp: 100,
-  img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
+  ...chosenHeroByComputer,
   weapon: ["Sword", "IceShot"],
   rootSelector: 'arenas'
 })

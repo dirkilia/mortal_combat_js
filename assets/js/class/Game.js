@@ -90,7 +90,7 @@ class Game {
       this.$arena.append($reloadButton);
 
       $reloadButton.addEventListener("click", () => {
-        window.location.reload();
+        window.location.pathname = 'index.html';
       });
     }
 
@@ -117,7 +117,6 @@ class Game {
     if (hit !== enemyDefence) {
       player2.changeHP(value);
       player2.renderHP();
-      console.log(1)
       new Logs({type: 'hit', player1: player1, player2: player2, player_hp: value}).generateLogs()
     } else {
       new Logs({type: 'defence', player1: player1, player2: player2}).generateLogs()

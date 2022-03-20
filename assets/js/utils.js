@@ -10,3 +10,4 @@ export const createElement = (tag, className) => {
 
   return $tag;
 };
+

@@ -22,7 +22,6 @@ class Logs {
         const hit_text = LOGS[this.type][getRandom(type_hit_length - 1)]
           .replace("[playerKick]", this.pl1.name)
           .replace("[playerDefence]", this.pl2.name);
-          console.log(this.pl1, this.pl2)
         const hit_el = `<p>${time.getHours()}:${time.getMinutes()}:${seconds} ${hit_text} -${this.player_hp} hp ${
           this.pl2.hp
         }/100</p>`;
